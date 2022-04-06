@@ -1,17 +1,41 @@
 #include <iostream>
-#include <stdlib.h>
 #include <time.h>
 #include <cstdio>
+#include <stdlib.h>
+using namespace std;
 
 std::string currentDateTime(){                                                              //tao chuoi ngay gio
     time_t now= time(0);
     struct tm tstruct;
     char buf[80];
+
     tstruct =*gmtime(&now);
     tstruct.tm_hour+=7;
     strftime(buf, sizeof(buf),"%Y/%m/%d     %X",&tstruct);
+
     return buf;
 };
+
+struct HOUR_MIN_SEC{                                                                        //Tao struct Gio,phut,giay
+    int Hour;
+    int Min;
+    int Sec;
+};
+
+struct HOUR_MIN_SEC currentHourTime(){                                                      //Tao ham tra ve Struct HOUR_MIN_SEC
+    time_t currentTime;
+    struct tm *localTime;
+
+    time( &currentTime );
+    localTime = localtime( &currentTime );
+    HOUR_MIN_SEC h;
+
+    h.Hour   = localTime->tm_hour;
+    h.Min    = localTime->tm_min;
+    h.Sec    = localTime->tm_sec;
+    //std::cout<<h.Hour<<":"<<h.Min<<":"<<h.Sec<<std::endl;
+    return h;
+}
 
 bool isNumber(std::string s)                                                                //kiem tra xem kieu co phai la so nguyen
 {
@@ -83,7 +107,7 @@ void sale(int money){                                                           
 
 int main(){
     system("cls");
-    int input;
+    int input;                                                     
     while (true){
         using namespace std;
 
@@ -107,18 +131,22 @@ int main(){
         if (input==0) break;
             else if (input==1) {
                 Hoadon *temp =new Hoadon;                                                   //tao hoa don moi
-                temp->setPhiGuiXe(5000);                                                    //Dat phi gui xe                                               
+                int ticket_price=10000;      
+                HOUR_MIN_SEC hour=currentHourTime();                                        //lay ngay gio hien tai
+                if  ((hour.Hour>18) || (hour.Hour=18 && hour.Min>=30))  ticket_price=20000; //Dat phi gui xe
+                temp->setPhiGuiXe(ticket_price);
                 while (temp->Inp()) {                                                       //Nhap tien khach tra
  
                 }
                 temp->InHoaDon();                                                           //In Hoa don
                 cout<<endl;
-                sale(5000);                                                                 //Tang danh thu len
+                sale(ticket_price);                                                         //Tang danh thu len
                 delete temp; 
             }
                 else if(input==2) {
                     cout<<"Tong doanh thu :"<<Revenue::getRevenue()<<endl<<endl;            //In Tong doanh thu
                 }
+                    else cout<<"Khong hop le. Vui long nhap lai."<<endl; 
         system("pause");                                                                    //Dung lai cho nhap 1 phim bat ky
     }
     system("pause");
